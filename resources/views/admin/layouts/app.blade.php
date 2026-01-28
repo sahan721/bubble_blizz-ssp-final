@@ -31,9 +31,9 @@
                 Orders
             </a>
 
-                        <a href="{{ route('admin.orders.index') }}"
+                        <a href="{{ route('admin.products.index') }}"
             class="block px-4 py-2 rounded-lg hover:bg-white/10">
-            Orders
+            Product Management
             </a>
 
             <a href="{{ route('admin.customers.index') }}"

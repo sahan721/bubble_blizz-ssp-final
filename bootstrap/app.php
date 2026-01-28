@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (\Illuminate\Foundation\Configuration\Middleware $middleware) {
     $middleware->alias([
         'api.customer' => \App\Http\Middleware\ApiCustomerOnly::class,
+        'api.admin' => \App\Http\Middleware\ApiAdminOnly::class,
         'rider' => \App\Http\Middleware\RiderMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'role'  => \App\Http\Middleware\RoleMiddleware::class, 

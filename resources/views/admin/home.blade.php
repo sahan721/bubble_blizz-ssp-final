@@ -104,13 +104,15 @@
                             <td class="px-5 py-4 font-bold text-slate-900">#{{ $order->id }}</td>
                             <td class="px-5 py-4">{{ $order->customer->name ?? 'N/A' }}</td>
                             <td class="px-5 py-4">
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold 
-                                      {{ $order->status === 'Pending' ? 'bg-amber-100 text-amber-800' : 
-                                         $order->status === 'Assigned' ? 'bg-blue-100 text-blue-800' : 
-                                         $order->status === 'Picked Up' ? 'bg-sky-100 text-sky-800' : 
-                                         $order->status === 'Delivered' ? 'bg-emerald-100 text-emerald-800' : 
-                                         $order->status === 'Cancelled' ? 'bg-rose-100 text-rose-800' : 
-                                         'bg-slate-100 text-slate-800' }}">
+                                <<span class="px-2 py-1 rounded-full text-xs font-semibold
+                                    {{
+                                        $order->status === 'Pending' ? 'bg-amber-100 text-amber-800'
+                                        : ($order->status === 'Assigned' ? 'bg-blue-100 text-blue-800'
+                                        : ($order->status === 'Picked Up' ? 'bg-sky-100 text-sky-800'
+                                        : ($order->status === 'Delivered' ? 'bg-emerald-100 text-emerald-800'
+                                        : ($order->status === 'Cancelled' ? 'bg-rose-100 text-rose-800'
+                                        : 'bg-slate-100 text-slate-800'))))
+                                    }}">
                                     {{ $order->status }}
                                 </span>
                             </td>

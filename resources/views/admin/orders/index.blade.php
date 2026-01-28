@@ -1,167 +1,85 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Orders')
-
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div class="space-y-6">
 
-    {{-- Alerts --}}
-    @if(session('success'))
-        <div class="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-emerald-700 text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="mb-4 rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-rose-700 text-sm">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    {{-- Header + Shop Tabs --}}
-    <div class="flex flex-col gap-4 mb-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-extrabold text-slate-900">Orders</h1>
-                <p class="text-sm text-slate-500">Shop view: Pending first, assign riders quickly</p>
-            </div>
-
-            <a href="{{ route('admin.orders.index') }}"
-               class="rounded-xl bg-slate-100 text-slate-800 px-4 py-2 text-sm font-semibold hover:bg-slate-200">
-                Refresh
-            </a>
-        </div>
-
-        @php
-            $tabs = [
-                '' => 'All',
-                'Pending' => 'Pending',
-                'Assigned' => 'Assigned',
-                'Picked Up' => 'Picked Up',
-                'Delivered' => 'Delivered',
-                'Cancelled' => 'Cancelled',
-            ];
-            $active = $status ?? '';
-        @endphp
-
-        <div class="flex flex-wrap gap-2">
-            @foreach($tabs as $key => $label)
-                <a href="{{ route('admin.orders.index', $key ? ['status' => $key] : []) }}"
-                   class="px-4 py-2 rounded-xl text-sm font-bold border transition
-                   {{ $active === $key
-                        ? 'bg-[#0EA5B9] text-white border-[#0EA5B9]'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
-                    {{ $label }}
-                </a>
-            @endforeach
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-slate-900">Manage Orders</h1>
+            <p class="text-sm text-slate-500 mt-1">Track orders, update status, and assign riders.</p>
         </div>
     </div>
 
-    {{-- Orders table --}}
-    <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-slate-50 border-b border-slate-200">
-                <tr class="text-left text-slate-600">
-                    <th class="px-5 py-3">Order</th>
-                    <th class="px-5 py-3">Customer</th>
-                    <th class="px-5 py-3">Total</th>
-                    <th class="px-5 py-3">Status</th>
-                    <th class="px-5 py-3">Rider</th>
-                    <th class="px-5 py-3 text-right">Assign</th>
-                </tr>
+    <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-5">
+        <form method="GET" action="{{ route('admin.orders.index') }}" class="flex flex-col sm:flex-row gap-3">
+            <select name="status"
+                    class="w-full sm:w-60 rounded-xl border-slate-200 focus:border-slate-400 focus:ring-slate-200">
+                <option value="">All Statuses</option>
+                @foreach($statuses as $s)
+                    <option value="{{ $s }}" {{ $status === $s ? 'selected' : '' }}>{{ $s }}</option>
+                @endforeach
+            </select>
+
+            <div class="flex gap-2">
+                <button class="rounded-xl px-4 py-2 text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800">
+                    Filter
+                </button>
+                <a href="{{ route('admin.orders.index') }}"
+                   class="rounded-xl px-4 py-2 text-sm font-semibold bg-slate-50 hover:bg-slate-100 ring-1 ring-slate-200">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 overflow-hidden">
+        <div class="p-5 overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="text-xs uppercase text-slate-500">
+                    <tr>
+                        <th class="text-left py-3 pr-4">Order</th>
+                        <th class="text-left py-3 pr-4">Customer</th>
+                        <th class="text-left py-3 pr-4">Rider</th>
+                        <th class="text-left py-3 pr-4">Status</th>
+                        <th class="text-left py-3 pr-4">Total</th>
+                        <th class="text-right py-3">Action</th>
+                    </tr>
                 </thead>
 
-                <tbody class="divide-y divide-slate-200">
-                @forelse($orders as $order)
-
-                    @php
-                        $badge = match ($order->status) {
-                            'Pending'   => 'bg-slate-50 text-slate-700 border-slate-200',
-                            'Assigned'  => 'bg-amber-50 text-amber-700 border-amber-200',
-                            'Picked Up' => 'bg-sky-50 text-sky-700 border-sky-200',
-                            'Delivered' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                            'Cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
-                            default     => 'bg-slate-50 text-slate-700 border-slate-200',
-                        };
-                    @endphp
-
-                    <tr>
-                        <td class="px-5 py-4 font-bold text-slate-900">
-                            #{{ $order->id }}
-                            <div class="text-xs text-slate-500 font-normal">
-                                {{ optional($order->created_at)->format('d M Y, h:i A') }}
-                            </div>
-                        </td>
-
-                        <td class="px-5 py-4">
-                            <div class="font-semibold text-slate-900">{{ $order->customer->name ?? 'N/A' }}</div>
-                            <div class="text-xs text-slate-500">{{ $order->customer->email ?? '' }}</div>
-                        </td>
-
-                        <td class="px-5 py-4 text-slate-800 font-semibold">
-                            Rs. {{ number_format($order->total, 2) }}
-                        </td>
-
-                        <td class="px-5 py-4">
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full border {{ $badge }}">
-                                {{ $order->status }}
+                <tbody class="divide-y divide-slate-100">
+                @forelse($orders as $o)
+                    <tr class="text-slate-700">
+                        <td class="py-3 pr-4 font-medium text-slate-900">#{{ $o->id }}</td>
+                        <td class="py-3 pr-4">{{ $o->user->name ?? '—' }}</td>
+                        <td class="py-3 pr-4">{{ $o->rider->name ?? 'Not assigned' }}</td>
+                        <td class="py-3 pr-4">
+                            <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold
+                                {{ $o->status === 'Delivered' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' : '' }}
+                                {{ $o->status === 'Pending' ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : '' }}
+                                {{ $o->status === 'Processing' ? 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200' : '' }}
+                                {{ $o->status === 'Cancelled' ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-200' : '' }}
+                            ">
+                                {{ $o->status }}
                             </span>
-
-                            {{-- Optional timestamps (looks pro) --}}
-                            <div class="mt-2 text-xs text-slate-500 space-y-1">
-                                @if($order->assigned_at) <div>Assigned: {{ $order->assigned_at->format('d M, h:i A') }}</div> @endif
-                                @if($order->picked_up_at) <div>Picked Up: {{ $order->picked_up_at->format('d M, h:i A') }}</div> @endif
-                                @if($order->delivered_at) <div>Delivered: {{ $order->delivered_at->format('d M, h:i A') }}</div> @endif
-                            </div>
                         </td>
-
-                        <td class="px-5 py-4">
-                            @if($order->rider)
-                                <div class="font-semibold text-slate-900">{{ $order->rider->name }}</div>
-                                <div class="text-xs text-slate-500">{{ $order->rider->email }}</div>
-                            @else
-                                <span class="text-xs text-slate-500">Not assigned</span>
-                            @endif
-                        </td>
-
-                        <td class="px-5 py-4 text-right">
-                            @if(in_array($order->status, ['Delivered','Cancelled'], true))
-                                <span class="text-xs text-slate-500">Locked</span>
-                            @else
-                                <form method="POST" action="{{ route('admin.orders.assign', $order) }}" class="flex justify-end gap-2">
-                                    @csrf
-                                    <select name="rider_id"
-                                            class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                                            required>
-                                        <option value="">Select rider</option>
-                                        @foreach($riders as $r)
-                                            <option value="{{ $r->id }}" @selected($order->rider_id == $r->id)>
-                                                {{ $r->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    <button class="rounded-xl bg-[#0EA5B9] text-white px-4 py-2 text-sm font-semibold hover:opacity-90">
-                                        Assign
-                                    </button>
-                                </form>
-                            @endif
+                        <td class="py-3 pr-4">LKR {{ number_format((float)$o->total, 2) }}</td>
+                        <td class="py-3 text-right">
+                            <a href="{{ route('admin.orders.show', $o->id) }}"
+                               class="rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50 hover:bg-slate-100 ring-1 ring-slate-200">
+                                View
+                            </a>
                         </td>
                     </tr>
-
                 @empty
                     <tr>
-                        <td colspan="6" class="px-5 py-10 text-center text-slate-500">
-                            No orders found.
-                        </td>
+                        <td colspan="6" class="py-8 text-center text-slate-500">No orders found.</td>
                     </tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="p-4 border-t border-slate-200">
+        <div class="px-5 py-4 border-t">
             {{ $orders->links() }}
         </div>
     </div>

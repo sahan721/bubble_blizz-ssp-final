@@ -57,3 +57,9 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Login creadentials
+
+Admin : admin@bubbleblizz.com / 12345678
+Rider : rider@bubbleblizz.com / 12345678
+Customer : customer@bubbleblizz.com / 12345678

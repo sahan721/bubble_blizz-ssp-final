@@ -142,4 +142,129 @@ Route::middleware('auth:sanctum')->group(function () {
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out from all devices']);
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN ONLY APIs (protected by role check)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('api.admin')->group(function () {
+        
+        // Admin Orders
+        Route::get('/admin/orders', function (Request $request) {
+            $status = $request->query('status');
+            
+            $ordersQuery = \App\Models\Order::with(['user', 'rider']);
+            
+            // Filter by status
+            if (!empty($status)) {
+                $ordersQuery->where('status', $status);
+            }
+            
+            // Sort by status priority then by created_at
+            $ordersQuery->orderByRaw("CASE
+                WHEN status = 'Pending' THEN 0
+                WHEN status = 'Assigned' THEN 1
+                WHEN status = 'Picked Up' THEN 2
+                WHEN status = 'Delivered' THEN 3
+                WHEN status = 'Cancelled' THEN 4
+                ELSE 5
+            END")
+            ->latest('created_at');
+            
+            $orders = $ordersQuery->paginate(10);
+            
+            return response()->json($orders);
+        });
+        
+        // Get single order details
+        Route::get('/admin/orders/{order}', function (\App\Models\Order $order) {
+            $order->load(['user', 'rider', 'items.product']);
+            return response()->json($order);
+        });
+        
+        // Update order status and rider
+        Route::put('/admin/orders/{order}', function (Request $request, \App\Models\Order $order) {
+            $validated = $request->validate([
+                'status' => 'required|in:Pending,Assigned,Picked Up,Delivered,Cancelled',
+                'rider_id' => 'nullable|exists:users,id',
+            ]);
+            
+            // Check if rider exists and is actually a rider
+            if ($validated['rider_id']) {
+                $rider = \App\Models\User::where('id', $validated['rider_id'])
+                    ->whereRaw("LOWER(role) = 'rider'")
+                    ->first();
+                
+                if (!$rider) {
+                    return response()->json(['message' => 'Selected user is not a rider'], 400);
+                }
+            }
+            
+            // Update the order
+            $order->status = $validated['status'];
+            $order->rider_id = $validated['rider_id'] ?? null;
+            
+            // Set assigned_at timestamp if assigning a rider
+            if ($validated['rider_id'] && !$order->assigned_at) {
+                $order->assigned_at = now();
+            }
+            
+            $order->save();
+            
+            return response()->json(['message' => 'Order updated successfully', 'order' => $order]);
+        });
+        
+        // Assign rider to order
+        Route::post('/admin/orders/{order}/assign', function (Request $request, \App\Models\Order $order) {
+            // Lock completed/cancelled orders
+            if (in_array($order->status, ['Delivered', 'Cancelled'], true)) {
+                return response()->json(['message' => 'This order is locked and cannot be reassigned'], 400);
+            }
+            
+            $validated = $request->validate([
+                'rider_id' => 'required|exists:users,id',
+            ]);
+            
+            // Ensure selected user is actually a rider
+            $rider = \App\Models\User::where('id', $validated['rider_id'])
+                ->whereRaw("LOWER(role) = 'rider'")
+                ->first();
+            
+            if (!$rider) {
+                return response()->json(['message' => 'Selected user is not a rider'], 400);
+            }
+            
+            // Assign and update workflow fields
+            $order->rider_id = $rider->id;
+            
+            // If order was Pending, move it to Assigned
+            if ($order->status === 'Pending') {
+                $order->status = 'Assigned';
+            }
+            
+            // Always set assigned_at when assigning
+            $order->assigned_at = now();
+            
+            $order->save();
+            
+            return response()->json(['message' => 'Rider assigned successfully', 'order' => $order]);
+        });
+        
+        // Get available riders
+        Route::get('/admin/riders', function () {
+            $riders = \App\Models\User::select('id', 'name', 'email')
+                ->whereRaw("LOWER(role) = 'rider'")
+                ->orderBy('name')
+                ->get();
+            
+            return response()->json($riders);
+        });
+        
+        // Get order statuses
+        Route::get('/admin/order-statuses', function () {
+            $statuses = ['Pending', 'Assigned', 'Picked Up', 'Delivered', 'Cancelled'];
+            return response()->json($statuses);
+        });
+    });
 });

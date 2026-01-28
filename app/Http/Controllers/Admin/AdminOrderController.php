@@ -12,6 +12,9 @@ class AdminOrderController extends Controller
     public function index(\Illuminate\Http\Request $request)
 {
     $status = $request->query('status'); // Pending, Assigned, Picked Up, Delivered, Cancelled
+    
+    // Define available order statuses for the filter dropdown
+    $statuses = ['Pending', 'Assigned', 'Picked Up', 'Delivered', 'Cancelled'];
 
     $ordersQuery = \App\Models\Order::with(['customer', 'rider']);
 
@@ -38,9 +41,24 @@ class AdminOrderController extends Controller
         ->orderBy('name')
         ->get();
 
-    return view('admin.orders.index', compact('orders', 'riders', 'status'));
+    return view('admin.orders.index', compact('orders', 'riders', 'status', 'statuses'));
 }
 
+
+    public function show(\App\Models\Order $order)
+    {
+        // Load the order with related models
+        $order->load(['user', 'rider', 'items.product']);
+        
+        // Get available statuses and riders for the form
+        $statuses = ['Pending', 'Assigned', 'Picked Up', 'Delivered', 'Cancelled'];
+        $riders = \App\Models\User::select('id', 'name', 'email')
+            ->whereRaw("LOWER(role) = 'rider'")
+            ->orderBy('name')
+            ->get();
+        
+        return view('admin.orders.show', compact('order', 'statuses', 'riders'));
+    }
 
 public function assign(\Illuminate\Http\Request $request, \App\Models\Order $order)
 {

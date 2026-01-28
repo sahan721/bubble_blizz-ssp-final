@@ -65,13 +65,17 @@
 
                     <td class="px-5 py-4 text-right">
                         <div class="flex justify-end gap-2">
-                            <a href="{{ route('admin.users.edit', $user) }}"
+                            <a href="{{ $role === 'rider'
+                                ? route('admin.riders.edit', $user)
+                                : route('admin.customers.edit', $user) }}"
                                class="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold">
                                 Edit
                             </a>
 
                             <form method="POST"
-                                  action="{{ route('admin.users.destroy', $user) }}"
+                                  action="{{ $role === 'rider'
+                                      ? route('admin.riders.destroy', $user)
+                                      : route('admin.customers.destroy', $user) }}"
                                   onsubmit="return confirm('Delete this {{ $role }}?')">
                                 @csrf
                                 @method('DELETE')
