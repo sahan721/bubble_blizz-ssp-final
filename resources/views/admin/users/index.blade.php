@@ -16,9 +16,7 @@
             </p>
         </div>
 
-        <a href="{{ $role === 'rider'
-            ? route('admin.riders.create')
-            : route('admin.customers.create') }}"
+        <a href="{{ route('admin.users.create', ['role' => $role]) }}"
            class="rounded-xl bg-[#0EA5B9] px-5 py-2 text-white font-semibold hover:opacity-90">
             + Add {{ ucfirst($role) }}
         </a>
@@ -65,17 +63,13 @@
 
                     <td class="px-5 py-4 text-right">
                         <div class="flex justify-end gap-2">
-                            <a href="{{ $role === 'rider'
-                                ? route('admin.riders.edit', $user)
-                                : route('admin.customers.edit', $user) }}"
+                            <a href="{{ route('admin.users.edit', $user) }}"
                                class="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold">
                                 Edit
                             </a>
 
                             <form method="POST"
-                                  action="{{ $role === 'rider'
-                                      ? route('admin.riders.destroy', $user)
-                                      : route('admin.customers.destroy', $user) }}"
+                                  action="{{ route('admin.users.destroy', $user) }}"
                                   onsubmit="return confirm('Delete this {{ $role }}?')">
                                 @csrf
                                 @method('DELETE')

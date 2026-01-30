@@ -21,6 +21,15 @@ class User extends Authenticatable
         'status',
         'phone',
         'address',
+        'provider',
+        'provider_id',
+        'avatar',
+        'two_factor_enabled',
+        'two_factor_type',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_email_code',
+        'two_factor_email_expires_at',
     ];
 
     protected $hidden = [
@@ -28,19 +37,20 @@ class User extends Authenticatable
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
+        'two_factor_email_code',
     ];
 
     protected $appends = [
         'profile_photo_url',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'two_factor_enabled' => 'boolean',
+        'two_factor_recovery_codes' => 'array',
+        'two_factor_email_expires_at' => 'datetime',
+    ];
 
     /* =========================
      | Role Helpers (IMPORTANT)

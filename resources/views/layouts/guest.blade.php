@@ -17,9 +17,14 @@
         <!-- Styles -->
         @livewireStyles
     </head>
-    <body>
-        <div class="font-sans text-gray-900 antialiased">
-            {{ $slot }}
+    <body class="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed" 
+          style="background-image: url('/images/banner.png');">
+        
+        <!-- Professional layered overlay -->
+        <div class="min-h-screen bg-gradient-to-br from-black/70 via-indigo-900/60 to-blue-900/70 backdrop-blur-sm">
+            <div class="font-sans text-gray-900 antialiased">
+                {{ $slot }}
+            </div>
         </div>
 
         @livewireScripts

@@ -23,12 +23,36 @@
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 animate-fade-in">
             <div>
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-3">Our Products</h1>
-                <p class="text-lg md:text-xl opacity-90 max-w-2xl">
-                    Discover our premium collection of beverages. Fresh, delicious, and delivered to your doorstep.
-                </p>
+                @if(isset($category) && $category)
+                    @php
+                        $categoryLabels = [
+                            'juices' => 'Fruit Juices',
+                            'soft-drinks' => 'Soft Drinks', 
+                            'dairy' => 'Dairy Drinks',
+                            'energy-drinks' => 'Energy Drinks'
+                        ];
+                        $categoryName = $categoryLabels[$category] ?? ucfirst(str_replace('-', ' ', $category));
+                    @endphp
+                    <p class="text-lg md:text-xl opacity-90 max-w-2xl">
+                        Browsing <span class="font-bold text-white bg-white/20 px-3 py-1 rounded-full">{{ $categoryName }}</span> category
+                    </p>
+                @else
+                    <p class="text-lg md:text-xl opacity-90 max-w-2xl">
+                        Discover our premium collection of beverages. Fresh, delicious, and delivered to your doorstep.
+                    </p>
+                @endif
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3">
+                @if(isset($category) && $category)
+                <a href="{{ route('customer.products') }}"
+                   class="rounded-lg bg-white text-[#1f4fbf] px-6 py-3 font-bold hover:bg-gray-100 transition-all hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    View All Products
+                </a>
+                @endif
 
                 <a href="{{ route('customer.cart') }}"
                    class="rounded-lg bg-white text-[#1f4fbf] px-6 py-3 font-bold hover:bg-gray-100 transition-all hover:shadow-xl hover:-translate-y-0.5">
@@ -46,29 +70,35 @@
     @php
         $favoriteIds = $favoriteIds ?? [];
     @endphp
-
     <!-- Category Navigation Chips -->
     <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-sm border-b border-gray-200 py-4 -mx-6 px-6 mb-8 shadow-sm">
         <div class="flex flex-wrap gap-3 justify-center">
             <a href="#juices"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-[#1f4fbf] text-[#1f4fbf] font-semibold text-sm transition-all hover:bg-[#1f4fbf] hover:text-white hover:shadow-lg hover:-translate-y-0.5 smooth-scroll">
-                <img src="{{ asset('images/img_fruitjuice.png') }}" alt="Fruit Juice" class="w-5 h-5 object-contain">
-                Fruit Juices
+               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
+                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
+               aria-label="Scroll to Fruit Juices">
+                <span class="text-lg">🍹</span> Fruit Juices
             </a>
+
             <a href="#soft-drinks"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-[#1f4fbf] text-[#1f4fbf] font-semibold text-sm transition-all hover:bg-[#1f4fbf] hover:text-white hover:shadow-lg hover:-translate-y-0.5 smooth-scroll">
-                <img src="{{ asset('images/img_softdrink.png') }}" alt="Soft Drink" class="w-5 h-5 object-contain">
-                Soft Drinks
+               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
+                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
+               aria-label="Scroll to Soft Drinks">
+                <span class="text-lg">🥤</span> Soft Drinks
             </a>
+
             <a href="#dairy"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-[#1f4fbf] text-[#1f4fbf] font-semibold text-sm transition-all hover:bg-[#1f4fbf] hover:text-white hover:shadow-lg hover:-translate-y-0.5 smooth-scroll">
-                <img src="{{ asset('images/img_dairydrink.png') }}" alt="Dairy Drink" class="w-5 h-5 object-contain">
-                Dairy Drinks
+               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
+                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
+               aria-label="Scroll to Dairy Drinks">
+                <span class="text-lg">🥛</span> Dairy Drinks
             </a>
+
             <a href="#energy-drinks"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-[#1f4fbf] text-[#1f4fbf] font-semibold text-sm transition-all hover:bg-[#1f4fbf] hover:text-white hover:shadow-lg hover:-translate-y-0.5 smooth-scroll">
-                <img src="{{ asset('images/img_energydrink.png') }}" alt="Energy Drink" class="w-5 h-5 object-contain">
-                Energy Drinks
+               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
+                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
+               aria-label="Scroll to Energy Drinks">
+                <span class="text-lg">⚡</span> Energy Drinks
             </a>
         </div>
     </div>
@@ -84,13 +114,11 @@
         </div>
     @endif
 
-    {{-- ✅ Livewire: this is the actual “external library usage” feature --}}
+    {{-- ✅ Livewire: this is the actual "external library usage" feature --}}
     <livewire:product-browser
-        :juices="$juices"
-        :softDrinks="$softDrinks"
-        :dairy="$dairy"
-        :energyDrinks="$energyDrinks"
+        :products="$products"
         :favoriteIds="$favoriteIds"
+        :category="$category ?? 'all'"
     />
 
 </main>
@@ -124,8 +152,6 @@
 .grid > div:nth-child(3) { animation-delay: 0.3s; }
 .grid > div:nth-child(4) { animation-delay: 0.4s; }
 
-.smooth-scroll { scroll-behavior: smooth; }
-
 #backToTop {
     opacity: 0;
     transform: translateY(20px);
@@ -147,6 +173,27 @@ button:focus-visible, a:focus-visible, select:focus-visible {
 </style>
 
 <script>
+// Smooth scrolling for category chips
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const id = this.getAttribute('href');
+            const targetElement = document.querySelector(id);
+            
+            if (targetElement) {
+                e.preventDefault();
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                // Update URL without page reload
+                history.replaceState(null, '', id);
+            }
+        });
+    });
+});
+
+// Back to top button visibility
 window.addEventListener('scroll', function() {
     const backToTopBtn = document.getElementById('backToTop');
     if (window.pageYOffset > 300) {
@@ -156,16 +203,6 @@ window.addEventListener('scroll', function() {
         backToTopBtn.classList.remove('visible');
         backToTopBtn.classList.add('hidden');
     }
-});
-
-document.querySelectorAll('.smooth-scroll').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
 });
 </script>
 

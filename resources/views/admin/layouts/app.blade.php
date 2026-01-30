@@ -13,7 +13,7 @@
     {{-- Sidebar --}}
     <aside class="w-72 bg-[#0EA5B9] text-white hidden md:flex flex-col">
         <div class="px-6 py-6 border-b border-white/20 flex items-center gap-3">
-            <img src="{{ asset('images/ic_bubbleblizz_logo_small.png') }}" alt="BubbleBlizz Logo" class="h-10 w-10 object-contain">
+            <img src="{{ asset('images/bubbleblizz-logo.png') }}" alt="BubbleBlizz Logo" class="h-10 w-10 object-contain">
             <div>
                 <div class="text-xs uppercase tracking-widest opacity-80">ADMIN</div>
                 <div class="text-lg font-extrabold leading-tight">BubbleBlizz</div>
@@ -36,12 +36,12 @@
             Product Management
             </a>
 
-            <a href="{{ route('admin.customers.index') }}"
+            <a href="{{ route('admin.users.index') }}?role=customer"
             class="block px-4 py-2 rounded-lg hover:bg-white/10">
             Customer Management
             </a>
 
-            <a href="{{ route('admin.riders.index') }}"
+            <a href="{{ route('admin.users.index') }}?role=rider"
             class="block px-4 py-2 rounded-lg hover:bg-white/10">
             Rider Management
             </a>

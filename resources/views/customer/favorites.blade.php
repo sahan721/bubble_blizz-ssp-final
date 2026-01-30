@@ -28,10 +28,10 @@
                 <div class="overflow-hidden rounded-xl bg-white shadow border border-gray-200">
                     <div class="bg-gradient-to-br from-gray-100 to-gray-200 p-6 flex justify-center">
                         <img
-                            src="{{ $p->image ?? asset('images/img_placeholder.png') }}"
+                            src="{{ asset($p->image) ?: asset('images/img_placeholder.png') }}"
                             class="h-32 w-32 object-contain"
                             alt="{{ $p->name }}"
-                            onerror="this.onerror=null;this.src='/images/img_placeholder.png'"
+
                         >
                     </div>
                     <div class="p-5">
@@ -42,7 +42,7 @@
                             <div class="text-green-700 font-medium text-sm">In Stock ({{ $p->stock }})</div>
                         </div>
                 
-                        <form method="POST" action="{{ route('favorites.toggle') }}" class="mt-4">
+                        <form method="POST" action="{{ url('/api/customer/favorites/toggle') }}" class="mt-4">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $p->id }}">
                             <button class="w-full rounded-md bg-red-500 py-3 text-white font-extrabold hover:bg-red-600">

@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class RiderController extends Controller
 {
+    public function index()
+    {
+        return $this->dashboard();
+    }
+
     public function dashboard()
     {
         $riderId = Auth::id();

@@ -1,148 +1,123 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-// Landing
-use App\Http\Controllers\LandingController;
-
-// Admin
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminProductController;
-
-// Customer
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Rider\RiderController;
 use App\Http\Controllers\Customer\HomeController as CustomerHomeController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Customer\FavoriteController as CustomerFavoriteController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\Customer\CartController as CustomerCartController;
-use App\Http\Controllers\Customer\FavoriteController as CustomerFavoriteController;
-use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
-
-// Rider
-use App\Http\Controllers\Rider\RiderController;
-
-// Settings (from your route:list)
+use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\Auth\TwoFactorSettingsController;
+use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
-| Public
+| Web Routes
 |--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
 */
+
 Route::get('/', function () {
-    return redirect()->route('customer.home');
-})->name('landing');
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Dashboard (exists in your route:list)
-|--------------------------------------------------------------------------
-| You already redirect users after login using LoginResponse to:
-| admin/home, rider/home, customer/home
-| So this can be a simple view or redirect. Keep it safe:
-*/
-Route::get('/dashboard', function () {
-    return redirect()->route('landing');
-})->name('dashboard');
-
-/*
-|--------------------------------------------------------------------------
-| Settings (available to any authenticated user)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
-    Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
-    Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile.update');
-    Route::post('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password.update');
+    return view('welcome');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes (matches your route:list)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/home', [AdminController::class, 'home'])->name('home');
-
-    // Products management
+    Route::get('/dashboard', [AdminController::class, 'home'])->name('dashboard');
+    
+    // Users Management
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+    
+    // Products Management
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
     Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
-
-    // Customers management
-    Route::get('/customers', [AdminUserController::class, 'customers'])->name('customers.index');
-    Route::get('/customers/create', [AdminUserController::class, 'createCustomer'])->name('customers.create');
-    Route::post('/customers', [AdminUserController::class, 'storeCustomer'])->name('customers.store');
-    Route::get('/customers/{user}/edit', [AdminUserController::class, 'edit'])->name('customers.edit');
-    Route::put('/customers/{user}', [AdminUserController::class, 'update'])->name('customers.update');
-    Route::delete('/customers/{user}', [AdminUserController::class, 'destroy'])->name('customers.destroy');
-
-    // Riders management
-    Route::get('/riders', [AdminUserController::class, 'riders'])->name('riders.index');
-    Route::get('/riders/create', [AdminUserController::class, 'createRider'])->name('riders.create');
-    Route::post('/riders', [AdminUserController::class, 'storeRider'])->name('riders.store');
-    Route::get('/riders/{user}/edit', [AdminUserController::class, 'edit'])->name('riders.edit');
-    Route::put('/riders/{user}', [AdminUserController::class, 'update'])->name('riders.update');
-    Route::delete('/riders/{user}', [AdminUserController::class, 'destroy'])->name('riders.destroy');
-
-    // Orders
+    
+    // Orders Management
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    Route::post('/orders/{order}/assign', [AdminOrderController::class, 'assign'])->name('orders.assign');
+    Route::put('/orders/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Rider Routes (matches your route:list)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'verified', 'rider'])->prefix('rider')->name('rider.')->group(function () {
-
-    // In your route:list, rider/home maps to dashboard()
-    Route::get('/home', [RiderController::class, 'dashboard'])->name('home');
-
-    Route::get('/dashboard', [RiderController::class, 'dashboard'])->name('dashboard');
+// Rider Routes
+Route::middleware(['auth', 'role:rider'])->prefix('rider')->name('rider.')->group(function () {
+    Route::get('/home', [RiderController::class, 'index'])->name('home');
     Route::get('/orders', [RiderController::class, 'orders'])->name('orders');
-    Route::get('/orders/history', [RiderController::class, 'history'])->name('orders.history');
-
-    Route::post('/orders/{order}/picked-up', [RiderController::class, 'markPickedUp'])->name('orders.picked_up');
-    Route::post('/orders/{order}/delivered', [RiderController::class, 'markDelivered'])->name('orders.delivered');
-
-    Route::get('/earnings', [RiderController::class, 'earnings'])->name('earnings');
-
-    Route::get('/profile', [RiderController::class, 'profile'])->name('profile');
-    Route::post('/profile', [RiderController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/orders/{order}/accept', [RiderController::class, 'acceptOrder'])->name('orders.accept');
+    Route::put('/orders/{order}/pickup', [RiderController::class, 'pickupOrder'])->name('orders.pickup');
+    Route::put('/orders/{order}/deliver', [RiderController::class, 'deliverOrder'])->name('orders.deliver');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Customer Routes (LOCKED to role:customer) (matches your route:list)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
-
-    Route::get('/customer/home', [CustomerHomeController::class, 'index'])->name('customer.home');
-
-    Route::get('/products', [CustomerProductController::class, 'index'])->name('customer.products');
-
-    Route::get('/favorites', [CustomerFavoriteController::class, 'index'])->name('customer.favorites');
-    Route::post('/favorites/toggle', [CustomerFavoriteController::class, 'toggle'])->name('favorites.toggle');
-
-    Route::get('/cart', [CustomerCartController::class, 'index'])->name('customer.cart');
+// Customer Routes
+Route::middleware(['auth', 'role:customer', 'EnsureTwoFactorVerified'])->prefix('customer')->name('customer.')->group(function () {
+    Route::get('/home', [CustomerHomeController::class, 'index'])->name('home');
+    // Products route
+    Route::get('/products', [CustomerProductController::class, 'index'])->name('products');
+    // Cart routes
+    Route::get('/cart', [CustomerCartController::class, 'index'])->name('cart');
     Route::post('/cart/add', [CustomerCartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update', [CustomerCartController::class, 'update'])->name('cart.update');
     Route::post('/cart/remove', [CustomerCartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/clear', [CustomerCartController::class, 'clear'])->name('cart.clear');
-
-    Route::get('/orders', [CustomerOrderController::class, 'index'])->name('customer.orders');
-    Route::post('/checkout/place-order', [CustomerOrderController::class, 'place'])->name('customer.place_order');
-
-    Route::view('/packages', 'customer.packages')->name('customer.packages');
+    // Orders routes
+    Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/create', [CustomerOrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders', [CustomerOrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
+    // Favorites routes
+    Route::get('/favorites', [CustomerFavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/{product}', [CustomerFavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites/{favorite}', [CustomerFavoriteController::class, 'destroy'])->name('favorites.destroy');
+    // Packages route (redirecting to products for now)
+    Route::get('/packages', [CustomerProductController::class, 'index'])->name('packages');
 });
+
+// Settings Routes (for all authenticated users)
+Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function () {
+    Route::get('/', [SettingsController::class, 'index'])->name('index');
+    Route::post('/profile', [SettingsController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/security', [SettingsController::class, 'security'])->name('security');
+    Route::post('/password', [SettingsController::class, 'updatePassword'])->name('password.update');
+});
+
+// Social Login Routes
+Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+
+// Two-Factor Authentication Routes
+Route::middleware('auth')->prefix('two-factor')->name('two-factor.')->group(function () {
+    Route::get('/settings', [TwoFactorSettingsController::class, 'index'])->name('settings');
+    Route::post('/enable', [TwoFactorSettingsController::class, 'enable'])->name('enable');
+    Route::post('/disable', [TwoFactorSettingsController::class, 'disable'])->name('disable');
+    Route::get('/qr-code', [TwoFactorSettingsController::class, 'showQrCode'])->name('qr-code');
+    Route::post('/confirm-totp', [TwoFactorSettingsController::class, 'confirmTotp'])->name('confirm-totp');
+    Route::get('/recovery-codes', [TwoFactorSettingsController::class, 'showRecoveryCodes'])->name('recovery-codes');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/two-factor/challenge', [TwoFactorChallengeController::class, 'show'])->name('two-factor.challenge');
+    Route::post('/two-factor/verify', [TwoFactorChallengeController::class, 'verify'])->name('two-factor.verify');
+    Route::post('/two-factor/resend-email', [TwoFactorChallengeController::class, 'resendEmailCode'])->name('two-factor.resend-email');
+});
+
+
+// Jetstream authentication routes are loaded via FortifyServiceProvider

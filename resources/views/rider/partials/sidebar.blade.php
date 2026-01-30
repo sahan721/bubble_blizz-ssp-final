@@ -12,29 +12,14 @@
     <nav class="flex-1 px-4 py-6 space-y-1 text-sm">
         @php $r = request()->route()?->getName(); @endphp
 
-        <a href="{{ route('rider.dashboard') }}"
-           class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 {{ $r==='rider.dashboard' ? 'bg-white/15' : '' }}">
+        <a href="{{ route('rider.home') }}"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 {{ $r==='rider.home' ? 'bg-white/15' : '' }}">
             <span>🏠</span> <span class="font-semibold">Dashboard</span>
         </a>
 
         <a href="{{ route('rider.orders') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 {{ $r==='rider.orders' ? 'bg-white/15' : '' }}">
             <span>📦</span> <span class="font-semibold">Orders</span>
-        </a>
-
-        <a href="{{ route('rider.earnings') }}"
-           class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 {{ $r==='rider.earnings' ? 'bg-white/15' : '' }}">
-            <span>💰</span> <span class="font-semibold">Earnings</span>
-        </a>
-
-        <a href="{{ route('rider.profile') }}"
-           class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 {{ $r==='rider.profile' ? 'bg-white/15' : '' }}">
-            <span>👤</span> <span class="font-semibold">Profile</span>
-        </a>
-
-        <a href="{{ route('rider.orders.history') }}"
-           class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 {{ $r==='rider.orders.history' ? 'bg-white/15' : '' }}">
-            <span>📦</span> <span class="font-semibold">Delivered History</span>
         </a>
 
     </nav>

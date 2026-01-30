@@ -10,12 +10,10 @@
     </h1>
 
     <form method="POST"
-          action="{{ $role === 'rider'
-            ? route('admin.riders.store')
-            : route('admin.customers.store') }}"
+          action="{{ route('admin.users.store') }}"
           class="space-y-4 bg-white p-6 rounded-2xl border shadow-sm">
         @csrf
-
+        <input type="hidden" name="role" value="{{ $role }}">
         <input name="name" placeholder="Full Name" class="w-full rounded-xl border px-4 py-2" required>
         <input name="email" type="email" placeholder="Email" class="w-full rounded-xl border px-4 py-2" required>
         <input name="password" type="password" placeholder="Password" class="w-full rounded-xl border px-4 py-2" required>
@@ -33,9 +31,7 @@
                 Create
             </button>
 
-            <a href="{{ $role === 'rider'
-                ? route('admin.riders.index')
-                : route('admin.customers.index') }}"
+            <a href="{{ route('admin.users.index', ['role' => $role]) }}"
                class="rounded-xl bg-slate-200 px-6 py-2 font-semibold">
                 Cancel
             </a>

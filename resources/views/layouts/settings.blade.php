@@ -29,7 +29,7 @@
                     {{ ucfirst(strtolower(auth()->user()->role ?? 'customer')) }}
                 </span>
 
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.home') : (auth()->user()->role === 'rider' ? route('rider.home') : route('customer.home')) }}"
                    class="text-sm font-semibold text-slate-700 hover:text-slate-900">
                     Back to Dashboard
                 </a>

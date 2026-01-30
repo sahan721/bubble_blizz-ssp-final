@@ -64,10 +64,10 @@
                         <div class="flex items-center gap-5">
                             <div class="h-20 w-20 rounded bg-gray-200 flex items-center justify-center">
                                 <img 
-                                    src="{{ asset('images/img_placeholder.png') }}" 
+                                    src="{{ asset($i['image']) ?: asset('images/img_placeholder.png') }}" 
                                     class="h-16 w-16 object-contain"
                                     alt="{{ $i['name'] }}"
-                                    onerror="this.onerror=null;this.src='/images/img_placeholder.png'"
+
                                 >
                             </div>
                         
@@ -84,7 +84,7 @@
                             <!-- Qty controls -->
                             <div class="flex items-center gap-3 text-xl text-gray-700">
                                 <!-- minus -->
-                                <form method="POST" action="{{ route('cart.update') }}">
+                                <form method="POST" action="{{ route('customer.cart.update') }}">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $i['id'] }}">
                                     <input type="hidden" name="qty" value="{{ $i['qty'] - 1 }}">
@@ -96,7 +96,7 @@
                                 </div>
 
                                 <!-- plus -->
-                                <form method="POST" action="{{ route('cart.update') }}">
+                                <form method="POST" action="{{ route('customer.cart.update') }}">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $i['id'] }}">
                                     <input type="hidden" name="qty" value="{{ $i['qty'] + 1 }}">
@@ -108,7 +108,7 @@
                             <div class="text-right">
                                 <div class="text-xl font-extrabold">${{ number_format($i['line'],2) }}</div>
 
-                                <form method="POST" action="{{ route('cart.remove') }}" class="mt-1">
+                                <form method="POST" action="{{ route('customer.cart.remove') }}" class="mt-1">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $i['id'] }}">
                                     <button class="text-red-500 font-semibold hover:underline">Remove</button>
@@ -131,7 +131,7 @@
                                 Continue Shopping
                             </a>
 
-                            <form method="POST" action="{{ route('cart.clear') }}">
+                            <form method="POST" action="{{ route('customer.cart.clear') }}">
                                 @csrf
                                 <button class="rounded-md bg-red-600 px-6 py-3 text-white font-semibold hover:bg-red-700">
                                     Clear Cart
@@ -152,7 +152,7 @@
                 <h2 class="text-2xl font-extrabold text-gray-900">Checkout</h2>
 
                 {{-- IMPORTANT: Wrap checkout in a form that posts to place_order --}}
-                <form method="POST" action="{{ route('customer.place_order') }}">
+                <form method="POST" action="{{ route('customer.orders.store') }}">
                     @csrf
 
                     <div class="mt-5">

@@ -13,6 +13,25 @@ class AdminUserController extends Controller
      * LIST PAGES
      * ========================= */
 
+    public function index(Request $request)
+    {
+        $role = $request->get('role');
+        
+        $query = User::query();
+        
+        // Filter by role if specified
+        if ($role && in_array(strtolower($role), ['customer', 'rider'])) {
+            $query->whereRaw('LOWER(role) = ?', [strtolower($role)]);
+        } else {
+            // Default to showing all non-admin users
+            $query->whereRaw('LOWER(role) IN (?, ?)', ['customer', 'rider']);
+        }
+        
+        $users = $query->latest()->paginate(10);
+        
+        return view('admin.users.index', compact('users', 'role'));
+    }
+
     public function customers()
     {
         $role = 'customer';
@@ -39,6 +58,18 @@ class AdminUserController extends Controller
      * CREATE FORMS
      * ========================= */
 
+    public function create(Request $request)
+    {
+        $role = $request->get('role', 'customer');
+        
+        // Validate role
+        if (!in_array(strtolower($role), ['customer', 'rider'])) {
+            $role = 'customer';
+        }
+        
+        return view('admin.users.create', compact('role'));
+    }
+
     public function createCustomer()
     {
         $role = 'customer';
@@ -54,6 +85,18 @@ class AdminUserController extends Controller
     /* =========================
      * STORE
      * ========================= */
+
+    public function store(Request $request)
+    {
+        $role = $request->get('role', 'customer');
+        
+        // Validate role
+        if (!in_array(strtolower($role), ['customer', 'rider'])) {
+            $role = 'customer';
+        }
+        
+        return $this->storeByRole($request, $role);
+    }
 
     public function storeCustomer(Request $request)
     {

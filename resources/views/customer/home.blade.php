@@ -49,9 +49,13 @@
                         class="group rounded-xl bg-white text-[#1f4fbf] px-8 py-4 text-lg font-bold hover:bg-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex items-center gap-2">
                         <span>🛍️</span> Shop Now
                     </a>
-                    <a href="{{ route('customer.orders') }}"
-                        class="group rounded-xl bg-white/20 backdrop-blur-sm px-8 py-4 text-lg font-bold hover:bg-white/30 transition-all duration-300 hover:shadow-lg flex items-center gap-2">
-                        <span>📦</span> View Orders
+                    <a href="{{ route('customer.orders.index') }}"
+                        class="text-sm text-[#1f4fbf] hover:text-[#173c92] font-semibold hover:underline transition-colors flex items-center gap-1">
+                        View All Orders
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -66,32 +70,40 @@
         <section class="mt-12 animate-slide-up">
             <h2 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">Browse by Category</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="{{ route('customer.products', ['category' => 'soft-drinks']) }}"
-                    class="group rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-blue-200">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🥤</div>
-                    <div class="text-lg font-bold text-gray-900 mb-1">Soft Drinks</div>
-                    <div class="text-sm text-gray-600">Classic sodas</div>
+                <a href="{{ route('customer.products', ['category' => 'juices']) }}"
+                    class="group rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-amber-200 hover:border-amber-300">
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🍹</div>
+                        <div class="text-lg font-bold text-gray-900 mb-1">Fruit Juices</div>
+                        <div class="text-sm text-gray-600">Fresh & natural</div>
+                    </div>
                 </a>
 
-                <a href="{{ route('customer.products', ['category' => 'juices']) }}"
-                    class="group rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-amber-200">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🍹</div>
-                    <div class="text-lg font-bold text-gray-900 mb-1">Juices</div>
-                    <div class="text-sm text-gray-600">Fresh fruit</div>
+                <a href="{{ route('customer.products', ['category' => 'soft-drinks']) }}"
+                    class="group rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-blue-200 hover:border-blue-300">
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🥤</div>
+                        <div class="text-lg font-bold text-gray-900 mb-1">Soft Drinks</div>
+                        <div class="text-sm text-gray-600">Classic sodas</div>
+                    </div>
                 </a>
 
                 <a href="{{ route('customer.products', ['category' => 'dairy']) }}"
-                    class="group rounded-2xl bg-gradient-to-br from-green-100 to-green-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-green-200">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🥛</div>
-                    <div class="text-lg font-bold text-gray-900 mb-1">Dairy</div>
-                    <div class="text-sm text-gray-600">Milk & shakes</div>
+                    class="group rounded-2xl bg-gradient-to-br from-green-100 to-green-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-green-200 hover:border-green-300">
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🥛</div>
+                        <div class="text-lg font-bold text-gray-900 mb-1">Dairy Drinks</div>
+                        <div class="text-sm text-gray-600">Milk & shakes</div>
+                    </div>
                 </a>
 
                 <a href="{{ route('customer.products', ['category' => 'energy-drinks']) }}"
-                    class="group rounded-2xl bg-gradient-to-br from-rose-100 to-rose-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-rose-200">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
-                    <div class="text-lg font-bold text-gray-900 mb-1">Energy Drinks</div>
-                    <div class="text-sm text-gray-600">Boost energy</div>
+                    class="group rounded-2xl bg-gradient-to-br from-rose-100 to-rose-200 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-rose-200 hover:border-rose-300">
+                    <div class="flex flex-col items-center">
+                        <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">⚡</div>
+                        <div class="text-lg font-bold text-gray-900 mb-1">Energy Drinks</div>
+                        <div class="text-sm text-gray-600">Boost energy</div>
+                    </div>
                 </a>
             </div>
         </section>
@@ -135,7 +147,7 @@
                     <div
                         class="group rounded-2xl bg-white shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
                         <div class="bg-gradient-to-br from-gray-100 to-gray-200 p-6 flex items-center justify-center">
-                            <img src="{{ $p->image ?? 'https://via.placeholder.com/200x200?text=🥤' }}"
+                            <img src="{{ asset($p->image) ?? 'https://via.placeholder.com/200x200?text=No+Image' }}"
                                 class="h-32 w-32 object-contain group-hover:scale-110 transition-transform duration-300"
                                 alt="{{ $p->name }}"
                                 onerror="this.src='https://via.placeholder.com/200x200?text=🥤'">
@@ -148,7 +160,7 @@
                                     {{ $p->name }}</h4>
 
                                 <!-- Favorite -->
-                                <form method="POST" action="{{ route('favorites.toggle') }}">
+                                <form method="POST" action="{{ url('/api/customer/favorites/toggle') }}">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $p->id }}">
                                     <button type="submit"
@@ -181,7 +193,7 @@
 
                             <!-- Add to Cart -->
                             <form id="addcart-home-{{ $p->id }}" method="POST"
-                                action="{{ route('cart.add') }}">
+                                action="{{ route('customer.cart.add') }}">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $p->id }}">
                                 <button type="submit"
@@ -211,7 +223,7 @@
                 <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
                     <span>📦</span> Your Recent Orders
                 </h2>
-                <a href="{{ route('customer.orders') }}"
+                <a href="{{ route('customer.orders.index') }}"
                     class="text-sm text-[#1f4fbf] hover:text-[#173c92] font-semibold hover:underline transition-colors flex items-center gap-1">
                     View All Orders
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -24,12 +24,12 @@
                    class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.home' ? 'underline underline-offset-4' : '' }}">Home</a>
                 <a href="{{ route('customer.products') }}" 
                    class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.products' ? 'underline underline-offset-4' : '' }}">Products</a>
-                <a href="{{ route('customer.favorites') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.favorites' ? 'underline underline-offset-4' : '' }}">Favorites</a>
+                <a href="{{ route('customer.favorites.index') }}" 
+                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.favorites.index' ? 'underline underline-offset-4' : '' }}">Favorites</a>
                 <a href="{{ route('customer.cart') }}" 
                    class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.cart' ? 'underline underline-offset-4' : '' }}">Cart</a>
-                <a href="{{ route('customer.orders') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.orders' ? 'underline underline-offset-4' : '' }}">Orders</a>
+                <a href="{{ route('customer.orders.index') }}" 
+                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.orders.index' ? 'underline underline-offset-4' : '' }}">Orders</a>
                 <a href="{{ route('customer.packages') }}" 
                    class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.packages' ? 'underline underline-offset-4' : '' }}">Packages</a>
                 <a href="{{ route('settings.index') }}" 
@@ -84,13 +84,13 @@
                 <a href="{{ route('customer.products') }}" 
                    @click="mobileMenuOpen = false"
                    class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Products</a>
-                <a href="{{ route('customer.favorites') }}" 
+                <a href="{{ route('customer.favorites.index') }}" 
                    @click="mobileMenuOpen = false"
                    class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Favorites</a>
                 <a href="{{ route('customer.cart') }}" 
                    @click="mobileMenuOpen = false"
                    class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Cart</a>
-                <a href="{{ route('customer.orders') }}" 
+                <a href="{{ route('customer.orders.index') }}" 
                    @click="mobileMenuOpen = false"
                    class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Orders</a>
                 <a href="{{ route('customer.packages') }}" 

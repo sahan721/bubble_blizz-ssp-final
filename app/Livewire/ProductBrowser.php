@@ -16,12 +16,17 @@ class ProductBrowser extends Component
     public array $quantities = [];
     public $notification = null;
 
-    public function mount()
+    public function mount($category = null)
     {
         // Initialize quantities to 1 for all products
         $products = Product::all();
         foreach ($products as $product) {
             $this->quantities[$product->id] = 1;
+        }
+        
+        // Set initial category if provided (handle null case)
+        if ($category && is_string($category)) {
+            $this->category = $category;
         }
     }
 
@@ -50,6 +55,14 @@ class ProductBrowser extends Component
             }
         }
 
+        // Get user's favorite product IDs
+        $favoriteIds = [];
+        if (Auth::check()) {
+            $favoriteIds = Favorite::where('user_id', Auth::id())
+                ->pluck('product_id')
+                ->toArray();
+        }
+
         // group by category
         $grouped = $products->groupBy('category');
 
@@ -64,6 +77,7 @@ class ProductBrowser extends Component
         return view('livewire.product-browser', [
             'grouped' => $grouped,
             'labels'  => $labels,
+            'favoriteIds' => $favoriteIds,
         ]);
     }
     
