@@ -21,7 +21,11 @@
         <x-banner />
 
         <div class="min-h-screen bg-gray-100">
-            @livewire('navigation-menu')
+            @if(request()->routeIs('shop.*'))
+                @include('shop.partials.topnav')
+            @else
+                @livewire('navigation-menu')
+            @endif
 
             <!-- Page Heading -->
             @if (isset($header))

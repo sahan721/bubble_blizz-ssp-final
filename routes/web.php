@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\TwoFactorSettingsController;
 use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ShopController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,9 +28,9 @@ use App\Http\Controllers\SettingsController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Public Shop Routes
+Route::get('/', [ShopController::class, 'home'])->name('shop.home');
+Route::get('/products', [ShopController::class, 'products'])->name('shop.products');
 
 // Admin Routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
