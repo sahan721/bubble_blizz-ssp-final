@@ -37,7 +37,7 @@
                     <img src="{{ asset('images/bubbleblizz-logo.png') }}" alt="Bubble Blizz Logo"
                         class="h-12 w-12 object-contain">
                     <h2 class="text-2xl md:text-4xl font-extrabold">
-                        Welcome back, <span class="text-yellow-300">{{ auth()->user()->name ?? 'User' }}</span>!
+                        Welcome back, <span class="text-yellow-300">{{ auth()->check() ? auth()->user()->name : 'Guest' }}</span>!
                     </h2>
                 </div>
                 <p class="text-lg md:text-xl opacity-90 max-w-3xl mx-auto mb-8">
