@@ -17,10 +17,15 @@ class HomeController
             ->take(8)
             ->get();
 
-        $favoriteIds = DB::table('favorites')
-            ->where('user_id', Auth::id())
-            ->pluck('product_id')
-            ->toArray();
+        // Handle guests vs authenticated users
+        if (Auth::check()) {
+            $favoriteIds = DB::table('favorites')
+                ->where('user_id', Auth::id())
+                ->pluck('product_id')
+                ->toArray();
+        } else {
+            $favoriteIds = [];
+        }
 
         return view('customer.home', compact('products', 'favoriteIds'));
     }

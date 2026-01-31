@@ -18,10 +18,14 @@ class ProductController extends Controller
         // Get all products for the Livewire component to handle
         $products = Product::all();
         
-        // Get favorite IDs for the current user
-        $favoriteIds = Favorite::where('user_id', Auth::id())
-            ->pluck('product_id')
-            ->toArray();
+        // Handle guests vs authenticated users
+        if (Auth::check()) {
+            $favoriteIds = Favorite::where('user_id', Auth::id())
+                ->pluck('product_id')
+                ->toArray();
+        } else {
+            $favoriteIds = [];
+        }
 
         return view('customer.products', compact(
             'products',

@@ -11,7 +11,8 @@
                     </svg>
                 </button>
                 
-                <a href="{{ url('/customer/home') }}" class="flex items-center gap-2 hover:opacity-95 transition-opacity">
+                <!-- Brand link to PUBLIC home -->
+                <a href="{{ route('shop.home') }}" class="flex items-center gap-2 hover:opacity-95 transition-opacity">
                     <img src="{{ asset('images/bubbleblizz-logo.png') }}" alt="Bubble Blizz Logo" class="h-8 w-8 object-contain">
                     <span class="text-2xl font-extrabold tracking-wide">Bubble Blizz</span>
                 </a>
@@ -20,31 +21,56 @@
             <!-- Desktop Navigation -->
             <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
                 @php $currentRoute = Route::currentRouteName(); @endphp
-                <a href="{{ route('customer.home') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.home' ? 'underline underline-offset-4' : '' }}">Home</a>
-                <a href="{{ route('customer.products') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.products' ? 'underline underline-offset-4' : '' }}">Products</a>
-                <a href="{{ route('customer.favorites.index') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.favorites.index' ? 'underline underline-offset-4' : '' }}">Favorites</a>
-                <a href="{{ route('customer.cart') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.cart' ? 'underline underline-offset-4' : '' }}">Cart</a>
-                <a href="{{ route('customer.orders.index') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.orders.index' ? 'underline underline-offset-4' : '' }}">Orders</a>
-                <a href="{{ route('customer.packages') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.packages' ? 'underline underline-offset-4' : '' }}">Packages</a>
-                <a href="{{ route('settings.index') }}" 
-                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'settings.index' ? 'underline underline-offset-4' : '' }}">Settings</a>
+                <!-- Always show public routes -->
+                <a href="{{ route('shop.home') }}" 
+                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'shop.home' ? 'underline underline-offset-4' : '' }}">Home</a>
+                <a href="{{ route('shop.products') }}" 
+                   class="hover:opacity-90 transition-opacity {{ $currentRoute === 'shop.products' ? 'underline underline-offset-4' : '' }}">Products</a>
+                
+                <!-- Show protected routes only when authenticated -->
+                @auth
+                    <a href="{{ route('customer.favorites.index') }}" 
+                       class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.favorites.index' ? 'underline underline-offset-4' : '' }}">Favorites</a>
+                    <a href="{{ route('customer.cart') }}" 
+                       class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.cart' ? 'underline underline-offset-4' : '' }}">Cart</a>
+                    <a href="{{ route('customer.orders.index') }}" 
+                       class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.orders.index' ? 'underline underline-offset-4' : '' }}">Orders</a>
+                    <a href="{{ route('customer.packages') }}" 
+                       class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.packages' ? 'underline underline-offset-4' : '' }}">Packages</a>
+                    <a href="{{ route('settings.index') }}" 
+                       class="hover:opacity-90 transition-opacity {{ $currentRoute === 'settings.index' ? 'underline underline-offset-4' : '' }}">Settings</a>
+                @endauth
             </nav>
 
             <!-- Right Section -->
             <div class="flex items-center gap-4">
-                <!-- User Info -->
-                <div class="flex items-center gap-2">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-sm font-bold transition-all hover:bg-white/30">
-                        {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                @auth
+                    <!-- User Info (only when authenticated) -->
+                    <div class="flex items-center gap-2">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-sm font-bold transition-all hover:bg-white/30">
+                            {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                        </div>
+                        <span class="hidden sm:inline text-sm opacity-95">{{ auth()->user()->name ?? 'user' }}</span>
                     </div>
-                    <span class="hidden sm:inline text-sm opacity-95">{{ auth()->user()->name ?? 'user' }}</span>
-                </div>
+                    
+                    <!-- Logout (only when authenticated) -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="hidden md:block rounded-lg bg-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/30 transition-all hover:shadow-lg">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <!-- Login/Register buttons (only when guest) -->
+                    <a href="{{ route('login') }}" 
+                       class="hidden md:block rounded-lg bg-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/30 transition-all hover:shadow-lg">
+                        Login
+                    </a>
+                    <a href="{{ route('register') }}" 
+                       class="hidden md:block rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold hover:bg-indigo-600 transition-all hover:shadow-lg">
+                        Register
+                    </a>
+                @endauth
 
                 <!-- Mobile Menu Toggle -->
                 <button @click="mobileMenuOpen = !mobileMenuOpen" 
@@ -56,14 +82,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
-
-                <!-- Logout -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="hidden md:block rounded-lg bg-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/30 transition-all hover:shadow-lg">
-                        Logout
-                    </button>
-                </form>
             </div>
         </div>
 
@@ -78,35 +96,50 @@
              class="md:hidden pb-4 mt-2 space-y-2">
             
             <div class="space-y-2 pt-2 border-t border-white/20">
-                <a href="{{ route('customer.home') }}" 
+                <!-- Always show public routes -->
+                <a href="{{ route('shop.home') }}" 
                    @click="mobileMenuOpen = false"
                    class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Home</a>
-                <a href="{{ route('customer.products') }}" 
+                <a href="{{ route('shop.products') }}" 
                    @click="mobileMenuOpen = false"
                    class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Products</a>
-                <a href="{{ route('customer.favorites.index') }}" 
-                   @click="mobileMenuOpen = false"
-                   class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Favorites</a>
-                <a href="{{ route('customer.cart') }}" 
-                   @click="mobileMenuOpen = false"
-                   class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Cart</a>
-                <a href="{{ route('customer.orders.index') }}" 
-                   @click="mobileMenuOpen = false"
-                   class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Orders</a>
-                <a href="{{ route('customer.packages') }}" 
-                   @click="mobileMenuOpen = false"
-                   class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Packages</a>
-                <a href="{{ route('settings.index') }}" 
-                   @click="mobileMenuOpen = false"
-                   class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Settings</a>
                 
-                <!-- Mobile Logout -->
-                <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-white/20">
-                    @csrf
-                    <button class="w-full text-left rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">
-                        Logout
-                    </button>
-                </form>
+                @auth
+                    <!-- Show protected routes only when authenticated -->
+                    <a href="{{ route('customer.favorites.index') }}" 
+                       @click="mobileMenuOpen = false"
+                       class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Favorites</a>
+                    <a href="{{ route('customer.cart') }}" 
+                       @click="mobileMenuOpen = false"
+                       class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Cart</a>
+                    <a href="{{ route('customer.orders.index') }}" 
+                       @click="mobileMenuOpen = false"
+                       class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Orders</a>
+                    <a href="{{ route('customer.packages') }}" 
+                       @click="mobileMenuOpen = false"
+                       class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Packages</a>
+                    <a href="{{ route('settings.index') }}" 
+                       @click="mobileMenuOpen = false"
+                       class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Settings</a>
+                    
+                    <!-- Mobile Logout -->
+                    <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-white/20">
+                        @csrf
+                        <button class="w-full text-left rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <!-- Mobile Login/Register (only when guest) -->
+                    <div class="pt-2 border-t border-white/20 space-y-2">
+                        <a href="{{ route('login') }}" 
+                           @click="mobileMenuOpen = false"
+                           class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all text-center">Login</a>
+                        <a href="{{ route('register') }}" 
+                           @click="mobileMenuOpen = false"
+                           class="block rounded-lg bg-indigo-500 px-4 py-3 text-sm font-medium hover:bg-indigo-600 transition-all text-center">Register</a>
+                    </div>
+                @endauth
             </div>
         </nav>
     </div>

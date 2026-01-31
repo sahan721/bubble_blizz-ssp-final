@@ -21,8 +21,8 @@
         <x-banner />
 
         <div class="min-h-screen bg-gray-100">
-            @if(request()->routeIs('shop.*'))
-                @include('shop.partials.topnav')
+            @if(request()->routeIs('shop.*') || request()->routeIs('customer.*'))
+                @include('customer.partials.topnav')
             @else
                 @livewire('navigation-menu')
             @endif

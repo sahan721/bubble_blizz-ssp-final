@@ -28,9 +28,9 @@ use App\Http\Controllers\ShopController;
 |
 */
 
-// Public Shop Routes
-Route::get('/', [ShopController::class, 'home'])->name('shop.home');
-Route::get('/products', [ShopController::class, 'products'])->name('shop.products');
+// Public Shop Routes - Using existing customer controllers for UI consistency
+Route::get('/', [CustomerHomeController::class, 'index'])->name('shop.home');
+Route::get('/products', [CustomerProductController::class, 'index'])->name('shop.products');
 
 // Admin Routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
