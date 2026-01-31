@@ -31,6 +31,7 @@ use App\Http\Controllers\ShopController;
 // Public Shop Routes - Using existing customer controllers for UI consistency
 Route::get('/', [CustomerHomeController::class, 'index'])->name('shop.home');
 Route::get('/products', [CustomerProductController::class, 'index'])->name('shop.products');
+Route::get('/shop', \App\Livewire\ProductBrowser::class)->name('shop.index');
 
 // Admin Routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

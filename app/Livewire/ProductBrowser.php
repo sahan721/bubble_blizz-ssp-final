@@ -14,7 +14,6 @@ class ProductBrowser extends Component
     
     // Track quantities for each product
     public array $quantities = [];
-    public $notification = null;
 
     public function mount($category = null)
     {
@@ -55,7 +54,7 @@ class ProductBrowser extends Component
             }
         }
 
-        // Get user's favorite product IDs
+        // Get user's favorite product IDs (if logged in)
         $favoriteIds = [];
         if (Auth::check()) {
             $favoriteIds = Favorite::where('user_id', Auth::id())
@@ -85,16 +84,9 @@ class ProductBrowser extends Component
     {
         $product = Product::findOrFail($productId);
         
-        if (!Auth::check()) {
-            $this->notification = ['message' => 'Please log in to add items to cart', 'type' => 'error'];
-            $this->dispatch('notify', message: 'Please log in to add items to cart', type: 'error');
-            return;
-        }
-        
         // Check if product is in stock
         if ($product->stock < $this->quantities[$productId]) {
-            $this->notification = ['message' => 'Insufficient stock available', 'type' => 'error'];
-            $this->dispatch('notify', message: 'Insufficient stock available', type: 'error');
+            session()->flash('message', 'Insufficient stock available');
             return;
         }
         
@@ -115,15 +107,13 @@ class ProductBrowser extends Component
         // Reset quantity to 1 after adding to cart
         $this->quantities[$productId] = 1;
         
-        $this->notification = ['message' => 'Product added to cart successfully!', 'type' => 'success'];
-        $this->dispatch('notify', message: 'Product added to cart successfully!', type: 'success');
+        session()->flash('message', 'Product added to cart successfully!');
     }
     
     public function toggleFavorite($productId)
     {
         if (!Auth::check()) {
-            $this->notification = ['message' => 'Please log in to add to favorites', 'type' => 'error'];
-            $this->dispatch('notify', message: 'Please log in to add to favorites', type: 'error');
+            session()->flash('message', 'Please log in to add to favorites');
             return;
         }
         
@@ -133,25 +123,18 @@ class ProductBrowser extends Component
         
         if ($favorite) {
             $favorite->delete();
-            $this->notification = ['message' => 'Product removed from favorites', 'type' => 'info'];
-            $this->dispatch('notify', message: 'Product removed from favorites', type: 'info');
+            session()->flash('message', 'Product removed from favorites');
         } else {
             Favorite::create([
                 'user_id' => Auth::id(),
                 'product_id' => $productId,
             ]);
-            $this->notification = ['message' => 'Product added to favorites', 'type' => 'success'];
-            $this->dispatch('notify', message: 'Product added to favorites', type: 'success');
+            session()->flash('message', 'Product added to favorites');
         }
     }
     
     public function updateQuantity($productId, $quantity)
     {
         $this->quantities[$productId] = max(1, intval($quantity));
-    }
-    
-    public function clearNotification()
-    {
-        $this->notification = null;
     }
 }

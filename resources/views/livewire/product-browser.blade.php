@@ -1,4 +1,6 @@
-<div class="space-y-8">
+<x-app-layout>
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="space-y-8">
 
     {{-- Search + Filter --}}
     <div class="flex flex-col md:flex-row gap-3">
@@ -23,69 +25,10 @@
 
     {{-- Notification Area --}}
     @if(session()->has('message'))
-        <div class="fixed top-4 right-4 z-50 rounded-xl bg-green-100 border border-green-400 text-green-700 px-6 py-4 shadow-lg font-semibold">
+        <div class="rounded-xl bg-green-100 border border-green-400 text-green-700 px-6 py-4 font-semibold">
             {{ session('message') }}
         </div>
     @endif
-
-    <div x-data="{ 
-            show: false, 
-            message: '',
-            type: 'success',
-            showMessage(message, type = 'success') {
-                this.message = message;
-                this.type = type;
-                this.show = true;
-                setTimeout(() => {
-                    this.show = false;
-                    $wire.clearNotification();
-                }, 3000);
-            }
-        }"
-         x-show="show"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-2"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-300"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-2"
-         class="fixed top-4 right-4 z-50"
-         x-on:notify.window="showMessage($event.detail.message, $event.detail.type)">
-        <div 
-            :class="{
-                'bg-green-100 border-green-400 text-green-700': type === 'success',
-                'bg-red-100 border-red-400 text-red-700': type === 'error',
-                'bg-blue-100 border-blue-400 text-blue-700': type === 'info',
-                'bg-yellow-100 border-yellow-400 text-yellow-700': type === 'warning'
-            }"
-            class="rounded-xl border px-6 py-4 shadow-lg font-semibold"
-            role="alert"
-        >
-            <div class="flex items-center gap-2">
-                <template x-if="type === 'success'">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </template>
-                <template x-if="type === 'error'">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </template>
-                <template x-if="type === 'info'">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </template>
-                <template x-if="type === 'warning'">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                </template>
-                <span x-text="message"></span>
-            </div>
-        </div>
-    </div>
 
     {{-- Grouped sections with anchor IDs --}}
     @forelse($grouped as $cat => $items)
@@ -189,4 +132,6 @@
         </div>
     @endforelse
 
-</div>
+        </div>
+    </div>
+</x-app-layout>
