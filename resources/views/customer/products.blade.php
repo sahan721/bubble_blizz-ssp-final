@@ -70,39 +70,6 @@
     @php
         $favoriteIds = $favoriteIds ?? [];
     @endphp
-    <!-- Category Navigation Chips -->
-    <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-sm border-b border-gray-200 py-4 -mx-6 px-6 mb-8 shadow-sm">
-        <div class="flex flex-wrap gap-3 justify-center">
-            <a href="#juices"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
-                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
-               aria-label="Scroll to Fruit Juices">
-                <span class="text-lg">🍹</span> Fruit Juices
-            </a>
-
-            <a href="#soft-drinks"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
-                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
-               aria-label="Scroll to Soft Drinks">
-                <span class="text-lg">🥤</span> Soft Drinks
-            </a>
-
-            <a href="#dairy"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
-                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
-               aria-label="Scroll to Dairy Drinks">
-                <span class="text-lg">🥛</span> Dairy Drinks
-            </a>
-
-            <a href="#energy-drinks"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1f4fbf]
-                      text-[#1f4fbf] font-semibold text-sm hover:bg-[#1f4fbf] hover:text-white transition"
-               aria-label="Scroll to Energy Drinks">
-                <span class="text-lg">⚡</span> Energy Drinks
-            </a>
-        </div>
-    </div>
-
     @if (session('status'))
         <div class="mt-6 rounded-xl bg-gradient-to-r from-green-100 to-emerald-50 border border-green-200 px-6 py-4 text-green-800 font-semibold shadow-sm animate-pulse">
             <div class="flex items-center gap-2">
