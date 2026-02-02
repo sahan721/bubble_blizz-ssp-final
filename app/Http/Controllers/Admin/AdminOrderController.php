@@ -16,7 +16,7 @@ class AdminOrderController extends Controller
     // Define available order statuses for the filter dropdown
     $statuses = ['Pending', 'Assigned', 'Picked Up', 'Delivered', 'Cancelled'];
 
-    $ordersQuery = \App\Models\Order::with(['customer', 'rider']);
+    $ordersQuery = \App\Models\Order::with(['customer', 'items', 'rider']);
 
     // Filter
     if (!empty($status)) {
@@ -48,7 +48,7 @@ class AdminOrderController extends Controller
     public function show(\App\Models\Order $order)
     {
         // Load the order with related models
-        $order->load(['user', 'rider', 'items.product']);
+        $order->load(['customer', 'rider', 'items.product']);
         
         // Get available statuses and riders for the form
         $statuses = ['Pending', 'Assigned', 'Picked Up', 'Delivered', 'Cancelled'];
@@ -96,4 +96,17 @@ public function assign(\Illuminate\Http\Request $request, \App\Models\Order $ord
     return back()->with('success', 'Rider assigned successfully.');
 }
 
+    public function update(Request $request, Order $order)
+    {
+        $data = $request->validate([
+            'status' => ['required', 'string'],
+            'rider_id' => ['nullable', 'integer', 'exists:users,id'],
+        ]);
+
+        $order->update($data);
+
+        return redirect()
+            ->route('admin.orders.show', $order->id)
+            ->with('success', 'Order updated successfully.');
+    }
 }

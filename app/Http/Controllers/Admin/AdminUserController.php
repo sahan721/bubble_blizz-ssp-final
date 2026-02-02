@@ -130,7 +130,7 @@ class AdminUserController extends Controller
         ]);
 
         return redirect()
-            ->route($role === 'rider' ? 'admin.riders.index' : 'admin.customers.index')
+            ->route('admin.users.index', ['role' => $role])
             ->with('success', ucfirst($role) . ' created successfully.');
     }
 
@@ -186,7 +186,7 @@ class AdminUserController extends Controller
         $user->save();
 
         return redirect()
-            ->route($role === 'rider' ? 'admin.riders.index' : 'admin.customers.index')
+            ->route('admin.users.index', ['role' => $role])
             ->with('success', ucfirst($role) . ' updated successfully.');
     }
 
@@ -204,7 +204,7 @@ class AdminUserController extends Controller
         $user->delete();
 
         return redirect()
-            ->route($role === 'rider' ? 'admin.riders.index' : 'admin.customers.index')
+            ->route('admin.users.index', ['role' => $role])
             ->with('success', ucfirst($role) . ' deleted successfully.');
     }
 }

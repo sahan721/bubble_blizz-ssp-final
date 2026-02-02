@@ -28,7 +28,7 @@
 
             <a href="{{ route('admin.orders.index') }}"
                class="block rounded-xl px-4 py-3 hover:bg-white/10">
-                Orders
+                Order Management
             </a>
 
                         <a href="{{ route('admin.products.index') }}"

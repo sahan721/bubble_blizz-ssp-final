@@ -7,7 +7,7 @@
         <div>
             <h1 class="text-2xl font-semibold text-slate-900">Order #{{ $order->id }}</h1>
             <p class="text-sm text-slate-500 mt-1">
-                Customer: <span class="font-medium text-slate-800">{{ $order->user->name ?? '—' }}</span>
+                Customer: <span class="font-medium text-slate-800">{{ $order->customer->name ?? '—' }}</span>
                 • {{ $order->created_at?->format('Y-m-d H:i') }}
             </p>
         </div>

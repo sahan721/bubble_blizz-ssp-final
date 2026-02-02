@@ -17,16 +17,6 @@ use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ShopController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 // Public Shop Routes - Using existing customer controllers for UI consistency
 Route::get('/', [CustomerHomeController::class, 'index'])->name('shop.home');
@@ -63,6 +53,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // Rider Routes
 Route::middleware(['auth', 'role:rider'])->prefix('rider')->name('rider.')->group(function () {
     Route::get('/home', [RiderController::class, 'index'])->name('home');
+    Route::get('/dashboard', [RiderController::class, 'index'])->name('dashboard');
     Route::get('/orders', [RiderController::class, 'orders'])->name('orders');
     Route::put('/orders/{order}/accept', [RiderController::class, 'acceptOrder'])->name('orders.accept');
     Route::put('/orders/{order}/pickup', [RiderController::class, 'pickupOrder'])->name('orders.pickup');
@@ -90,7 +81,7 @@ Route::middleware(['auth', 'role:customer', 'EnsureTwoFactorVerified'])->prefix(
     Route::post('/favorites/{product}', [CustomerFavoriteController::class, 'store'])->name('favorites.store');
     Route::delete('/favorites/{favorite}', [CustomerFavoriteController::class, 'destroy'])->name('favorites.destroy');
     // Packages route (redirecting to products for now)
-    Route::get('/packages', [CustomerProductController::class, 'index'])->name('packages');
+
 });
 
 // Settings Routes (for all authenticated users)
@@ -121,5 +112,3 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor/resend-email', [TwoFactorChallengeController::class, 'resendEmailCode'])->name('two-factor.resend-email');
 });
 
-
-// Jetstream authentication routes are loaded via FortifyServiceProvider

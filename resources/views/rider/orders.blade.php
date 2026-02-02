@@ -1,116 +1,126 @@
 @extends('rider.layouts.app')
 
 @section('title', 'My Orders')
-@section('page_title', 'My Orders')
-@section('page_subtitle', 'Manage assigned deliveries')
 
-@section('content')
-
-{{-- Alerts --}}
-@if(session('success'))
-    <div class="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-emerald-700 text-sm">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if(session('error'))
-    <div class="mb-4 rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-rose-700 text-sm">
-        {{ session('error') }}
-    </div>
-@endif
-
-<div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
-
-    <div class="p-5 flex items-center justify-between">
-        <div>
-            <h2 class="text-lg font-extrabold text-slate-900">Assigned Orders</h2>
-            <p class="text-xs text-slate-500">Your delivery tasks</p>
+    @section('content')
+        <div class="flex items-end justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900">My Orders</h1>
+                <p class="text-slate-600 mt-1">Orders assigned to you. Update status as you deliver.</p>
+            </div>
+            <a href="{{ route('rider.dashboard') }}"
+            class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
+                Back to Dashboard
+            </a>
         </div>
-    </div>
 
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-slate-50 border-b border-slate-200">
-                <tr class="text-left text-slate-600">
-                    <th class="px-5 py-3">Order</th>
-                    <th class="px-5 py-3">Customer</th>
-                    <th class="px-5 py-3">Address</th>
-                    <th class="px-5 py-3">Status</th>
-                    <th class="px-5 py-3 text-right">Actions</th>
-                </tr>
-            </thead>
-
-            <tbody class="divide-y divide-slate-200">
-                @forelse($orders as $order)
-
-                    @php
-                        $badge = match ($order->status) {
-                            'Assigned'  => 'bg-amber-50 text-amber-700 border-amber-200',
-                            'Picked Up' => 'bg-sky-50 text-sky-700 border-sky-200',
-                            'Delivered' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                            'Cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
-                            default     => 'bg-slate-50 text-slate-700 border-slate-200',
-                        };
-                    @endphp
-
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
                     <tr>
-                        <td class="px-5 py-4 font-bold text-slate-900">#{{ $order->id }}</td>
-
-                        <td class="px-5 py-4">
-                            {{ $order->customer->name ?? 'N/A' }}
-                        </td>
-
-                        <td class="px-5 py-4 text-slate-600">
-                            {{ $order->delivery_address ?? 'N/A' }}
-                        </td>
-
-                        <td class="px-5 py-4">
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full border {{ $badge }}">
-                                {{ $order->status }}
-                            </span>
-                        </td>
-
-                        <td class="px-5 py-4 text-right space-x-2">
-
-                            {{-- Mark Picked Up --}}
-                            @if($order->status === 'Assigned')
-                                <form method="POST" action="{{ route('rider.orders.picked_up', $order) }}" class="inline">
-                                    @csrf
-                                    <button type="submit"
-                                            class="rounded-lg bg-sky-600 text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90">
-                                        Picked Up
-                                    </button>
-                                </form>
-                            @endif
-
-                            {{-- Mark Delivered --}}
-                            @if($order->status === 'Picked Up')
-                                <form method="POST" action="{{ route('rider.orders.delivered', $order) }}" class="inline">
-                                    @csrf
-                                    <button type="submit"
-                                            class="rounded-lg bg-emerald-600 text-white px-3 py-1.5 text-xs font-semibold hover:opacity-90">
-                                        Delivered
-                                    </button>
-                                </form>
-                            @endif
-
-                        </td>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Order</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Customer</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Total</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Created</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
                     </tr>
+                    </thead>
 
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-5 py-10 text-center text-slate-500">
-                            No orders assigned to you.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                    @forelse($orders as $order)
+                        @php
+                            $badge = match($order->status) {
+                                'Pending'   => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800'],
+                                'Assigned'  => ['bg' => 'bg-blue-100',   'text' => 'text-blue-800'],
+                                'Picked Up' => ['bg' => 'bg-indigo-100', 'text' => 'text-indigo-800'],
+                                'Delivered' => ['bg' => 'bg-green-100',  'text' => 'text-green-800'],
+                                'Cancelled' => ['bg' => 'bg-red-100',    'text' => 'text-red-800'],
+                                default     => ['bg' => 'bg-slate-100',  'text' => 'text-slate-800'],
+                            };
+                        @endphp
 
-    <div class="p-4 border-t border-slate-200">
-        {{ $orders->links() }}
-    </div>
-</div>
+                        <tr class="hover:bg-slate-50/50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
+                                #{{ $order->id }}
+                            </td>
 
-@endsection
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
+                                {{ $order->customer->name ?? 'N/A' }}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $badge['bg'] }} {{ $badge['text'] }}">
+                                    {{ $order->status }}
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
+                                LKR {{ number_format($order->total ?? 0, 2) }}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                {{ optional($order->created_at)->format('Y-m-d H:i') }}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <div class="flex justify-end gap-2">
+
+                                    {{-- ✅ Accept: Pending -> Assigned --}}
+                                    @if($order->status === 'Pending')
+                                        <form method="POST" action="{{ route('rider.orders.accept', $order) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                    class="px-3 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">
+                                                Accept
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    {{-- ✅ Pick Up: Assigned -> Picked Up --}}
+                                    @if($order->status === 'Assigned')
+                                        <form method="POST" action="{{ route('rider.orders.pickup', $order) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                    class="px-3 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700">
+                                                Pick Up
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    {{-- ✅ Deliver: Picked Up -> Delivered --}}
+                                    @if($order->status === 'Picked Up')
+                                        <form method="POST" action="{{ route('rider.orders.deliver', $order) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                    class="px-3 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700">
+                                                Deliver
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-slate-500">
+                                No orders found.
+                            </td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if(method_exists($orders, 'links'))
+                <div class="px-6 py-4 border-t border-slate-200 bg-white">
+                    {{ $orders->links() }}
+                </div>
+            @endif
+        </div>
+    @endsection

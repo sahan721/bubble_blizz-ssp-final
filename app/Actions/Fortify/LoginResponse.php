@@ -9,7 +9,7 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request): RedirectResponse
     {
-        // ✅ remove any "intended" redirect like /dashboard
+        
         $request->session()->forget('url.intended');
 
         $user = $request->user();
@@ -18,11 +18,13 @@ class LoginResponse implements LoginResponseContract
             return redirect()->route('login');
         }
 
-        // ✅ ALWAYS go by role (NOT intended)
-        return match ($user->role) {
-            'admin' => redirect()->to('/admin/home'),
-            'rider' => redirect()->to('/rider/home'),
-            default => redirect()->to('/customer/home'),
+        $role = strtolower(trim((string) $user->role));
+
+        return match ($role) {
+            'admin'    => redirect('/admin/dashboard'),
+            'customer' => redirect('/home'),
+            'rider'    => redirect('/rider/dashboard'),
+            default    => redirect('/home'), 
         };
     }
 }

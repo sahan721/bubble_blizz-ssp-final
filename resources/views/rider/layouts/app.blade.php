@@ -1,65 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Rider Dashboard')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <title>{{ $title ?? 'Rider Panel' }}</title>
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
-<body class="h-full bg-slate-100">
-<div class="min-h-screen flex">
-
-    {{-- Sidebar --}}
-    @include('rider.partials.sidebar')
-
-    {{-- Main --}}
-    <div class="flex-1 flex flex-col">
-
-        {{-- Topbar --}}
-        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
-            <div class="px-4 md:px-8 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <button onclick="history.back()" 
-                            class="md:hidden rounded-lg bg-slate-100 p-2 hover:bg-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0EA5B9]/30">
-                        <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                    </button>
-                    <div>
-                        <h1 class="text-lg md:text-xl font-extrabold text-slate-900">
-                            @yield('page_title', 'Dashboard')
-                        </h1>
-                        <p class="text-xs md:text-sm text-slate-500">@yield('page_subtitle', 'Track deliveries & earnings')</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    {{-- Status Pill --}}
-                    <div class="rounded-full px-3 py-1 text-xs font-semibold
-                        bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Online
-                    </div>
-
-                    {{-- User --}}
-                    <div class="flex items-center gap-2">
-                        <div class="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
-                            {{ strtoupper(substr(auth()->user()->name ?? 'R', 0, 1)) }}
+<body class="min-h-screen bg-slate-50">
+    <div class="flex">
+        <!-- Sidebar -->
+        @include('rider.partials.sidebar')
+        
+        <div class="flex-1 flex flex-col min-h-screen">
+            <!-- Top Bar -->
+            <header class="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-9 w-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">
+                            R
                         </div>
-                        <div class="hidden sm:block">
-                            <div class="text-sm font-semibold text-slate-900">{{ auth()->user()->name ?? 'Rider' }}</div>
-                            <div class="text-xs text-slate-500">{{ auth()->user()->email ?? '' }}</div>
+                        <div>
+                            <div class="text-sm font-semibold text-slate-900">Rider Panel</div>
+                            <div class="text-xs text-slate-500">BubbleBlizz Delivery</div>
                         </div>
                     </div>
+
+                    <nav class="flex items-center gap-2">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                    class="px-3 py-2 rounded-lg text-sm font-medium text-white bg-slate-900 hover:bg-slate-800">
+                                Logout
+                            </button>
+                        </form>
+                    </nav>
                 </div>
+            </header>
+
+            <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @if(session('success'))
+            <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800">
+                {{ session('success') }}
             </div>
-        </header>
+        @endif
 
-        {{-- Content --}}
-        <main class="px-4 md:px-8 py-6">
-            @yield('content')
-        </main>
+        @if(session('error'))
+            <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-800">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @yield('content')
+            </main>
+        </div>
     </div>
-</div>
 </body>
 </html>
+    

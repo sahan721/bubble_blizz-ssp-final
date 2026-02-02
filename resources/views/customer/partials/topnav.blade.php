@@ -35,8 +35,7 @@
                        class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.cart' ? 'underline underline-offset-4' : '' }}">Cart</a>
                     <a href="{{ route('customer.orders.index') }}" 
                        class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.orders.index' ? 'underline underline-offset-4' : '' }}">Orders</a>
-                    <a href="{{ route('customer.packages') }}" 
-                       class="hover:opacity-90 transition-opacity {{ $currentRoute === 'customer.packages' ? 'underline underline-offset-4' : '' }}">Packages</a>
+
                     <a href="{{ route('settings.index') }}" 
                        class="hover:opacity-90 transition-opacity {{ $currentRoute === 'settings.index' ? 'underline underline-offset-4' : '' }}">Settings</a>
                 @endauth
@@ -115,9 +114,7 @@
                     <a href="{{ route('customer.orders.index') }}" 
                        @click="mobileMenuOpen = false"
                        class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Orders</a>
-                    <a href="{{ route('customer.packages') }}" 
-                       @click="mobileMenuOpen = false"
-                       class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Packages</a>
+
                     <a href="{{ route('settings.index') }}" 
                        @click="mobileMenuOpen = false"
                        class="block rounded-lg bg-white/15 px-4 py-3 text-sm font-medium hover:bg-white/25 transition-all">Settings</a>

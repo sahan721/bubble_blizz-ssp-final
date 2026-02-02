@@ -13,27 +13,37 @@ class RiderController extends Controller
 {
     public function index()
     {
-        return $this->dashboard();
-    }
-
-    public function dashboard()
-    {
+       
         $riderId = Auth::id();
         $today = Carbon::today();
 
+        // Assigned (includes picked up because rider is still working on it)
         $assignedCount = Order::where('rider_id', $riderId)
             ->whereIn('status', ['Assigned', 'Picked Up'])
             ->count();
 
+        // Pending Delivery = picked up and not delivered yet
+        $pendingDeliveryCount = Order::where('rider_id', $riderId)
+            ->where('status', 'Picked Up')
+            ->count();
+
+        // Delivered today
         $deliveredTodayCount = Order::where('rider_id', $riderId)
             ->where('status', 'Delivered')
             ->whereDate('delivered_at', $today)
             ->count();
 
+        // Earnings today (delivery_fee + tip)
         $todayEarnings = Order::where('rider_id', $riderId)
             ->where('status', 'Delivered')
             ->whereDate('delivered_at', $today)
             ->sum(DB::raw('delivery_fee + tip'));
+
+        // Safe fallbacks
+        $assignedCount = (int) ($assignedCount ?? 0);
+        $pendingDeliveryCount = (int) ($pendingDeliveryCount ?? 0);
+        $deliveredTodayCount = (int) ($deliveredTodayCount ?? 0);
+        $todayEarnings = (float) ($todayEarnings ?? 0);
 
         $recentOrders = Order::with(['customer'])
             ->where('rider_id', $riderId)
@@ -41,19 +51,60 @@ class RiderController extends Controller
             ->take(8)
             ->get();
 
+        if (!$recentOrders instanceof \Illuminate\Support\Collection) {
+            $recentOrders = collect([]);
+        }
+
         return view('rider.dashboard', compact(
             'assignedCount',
+            'pendingDeliveryCount',
             'deliveredTodayCount',
             'todayEarnings',
             'recentOrders'
         ));
     }
 
-        public function orders()
+    /**
+     * Accept a pending order.
+     * IMPORTANT: Pending orders often have rider_id = null, so we must NOT authorize by rider_id first.
+     */
+    public function acceptOrder(Order $order)
+    {
+        // Only pending orders can be accepted
+        if ($order->status !== 'Pending') {
+            return back()->with('error', 'Only pending orders can be accepted.');
+        }
+
+        // If already assigned to another rider, block
+        if (!is_null($order->rider_id) && (int) $order->rider_id !== (int) Auth::id()) {
+            abort(403, 'This order is assigned to another rider.');
+        }
+
+        // Assign to current rider and mark assigned
+        $order->update([
+            'rider_id' => Auth::id(),
+            'status' => 'Assigned',
+            'assigned_at' => now(),
+        ]);
+
+        return back()->with('success', 'Order accepted successfully.');
+    }
+
+    public function pickupOrder(Order $order)
+    {
+        return $this->markPickedUp($order);
+    }
+
+    public function deliverOrder(Order $order)
+    {
+        return $this->markDelivered($order);
+    }
+
+    public function orders()
     {
         $riderId = Auth::id();
 
-        $orders = \App\Models\Order::with('customer')
+        $orders = Order::with('customer')
             ->where('rider_id', $riderId)
             ->whereIn('status', ['Assigned', 'Picked Up'])
             ->latest('created_at')
@@ -62,7 +113,18 @@ class RiderController extends Controller
         return view('rider.orders', compact('orders'));
     }
 
+    public function history()
+    {
+        $riderId = Auth::id();
 
+        $orders = Order::with('customer')
+            ->where('rider_id', $riderId)
+            ->whereIn('status', ['Delivered']) // add 'Cancelled' if you want
+            ->latest('delivered_at')
+            ->paginate(10);
+
+        return view('rider.orders-history', compact('orders'));
+    }
 
     public function earnings(Request $request)
     {
@@ -75,11 +137,14 @@ class RiderController extends Controller
             ->where('status', 'Delivered')
             ->orderByDesc('delivered_at');
 
-        if ($from) $q->whereDate('delivered_at', '>=', $from);
-        if ($to)   $q->whereDate('delivered_at', '<=', $to);
+        if ($from) {
+            $q->whereDate('delivered_at', '>=', $from);
+        }
+        if ($to) {
+            $q->whereDate('delivered_at', '<=', $to);
+        }
 
         $earningsOrders = $q->paginate(10)->withQueryString();
-
         $totalEarnings = (clone $q)->sum(DB::raw('delivery_fee + tip'));
 
         return view('rider.earnings', compact('earningsOrders', 'totalEarnings', 'from', 'to'));
@@ -93,7 +158,7 @@ class RiderController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $user = Auth::user();
 
         $data = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
@@ -104,7 +169,6 @@ class RiderController extends Controller
 
         return back()->with('success', 'Profile updated successfully.');
     }
-
 
     public function markPickedUp(Order $order)
     {
@@ -144,19 +208,4 @@ class RiderController extends Controller
             abort(403, 'This order is not assigned to you.');
         }
     }
-
-        public function history()
-    {
-        $riderId = Auth::id();
-
-        $orders = \App\Models\Order::with('customer')
-            ->where('rider_id', $riderId)
-            ->whereIn('status', ['Delivered']) // add 'Cancelled' if you want
-            ->latest('delivered_at')
-            ->paginate(10);
-
-        return view('rider.orders-history', compact('orders'));
-    }
-
 }
-    

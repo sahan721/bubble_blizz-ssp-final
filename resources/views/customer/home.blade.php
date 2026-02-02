@@ -23,13 +23,7 @@
                     <h1 class="text-3xl md:text-4xl font-extrabold">Customer Dashboard</h1>
                     <p class="text-lg md:text-xl opacity-90 mt-1">Manage your orders and discover new beverages</p>
                 </div>
-                <div class="hidden md:flex items-center gap-2 text-sm text-white/80">
-                    <span>Dashboard</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                    <span class="font-semibold">Home</span>
-                </div>
+
             </div>
 
             <div class="mt-8 text-center">
@@ -50,7 +44,7 @@
                         <span>🛍️</span> Shop Now
                     </a>
                     <a href="{{ route('customer.orders.index') }}"
-                        class="text-sm text-[#1f4fbf] hover:text-[#173c92] font-semibold hover:underline transition-colors flex items-center gap-1">
+                        class="text-sm text-[#ffffff] hover:text-[#ffffff] font-semibold hover:underline transition-colors flex items-center gap-1">
                         View All Orders
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">

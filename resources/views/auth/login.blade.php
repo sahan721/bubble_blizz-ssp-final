@@ -125,6 +125,7 @@
             </div>
             
             <!-- Google Login Button (Visible only for Customer role) -->
+            @if(old('role', 'customer') === 'customer')
             <div class="mb-6">
                 <a
                     href="{{ route('auth.google') }}"
@@ -140,7 +141,33 @@
                     Continue with Google
                 </a>
             </div>
+            @endif
             
+            <!-- JavaScript to toggle Google login button based on selected role -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const roleSelect = document.getElementById('role-select');
+                    const googleLoginBtn = document.getElementById('google-login-btn');
+                    
+                    if (roleSelect && googleLoginBtn) {
+                        const googleLoginContainer = googleLoginBtn.closest('.mb-6');
+                        
+                        function toggleGoogleLogin() {
+                            if (roleSelect.value === 'customer') {
+                                googleLoginContainer.style.display = 'block';
+                            } else {
+                                googleLoginContainer.style.display = 'none';
+                            }
+                        }
+                        
+                        // Initial check
+                        toggleGoogleLogin();
+                        
+                        // Add event listener for role changes
+                        roleSelect.addEventListener('change', toggleGoogleLogin);
+                    }
+                });
+            </script>
         </div>
     </div>
 </x-guest-layout>
